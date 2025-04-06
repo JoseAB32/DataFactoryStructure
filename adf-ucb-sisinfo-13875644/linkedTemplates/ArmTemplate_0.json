@@ -4,16 +4,16 @@
 	"parameters": {
 		"factoryName": {
 			"type": "string",
-			"metadata": "Data Factory name",
+			"metadata": "Nombre de instancia de Data Factory",
 			"defaultValue": "adf-ucb-sisinfo-13875644"
 		},
 		"Datos_pizzas_connectionString": {
 			"type": "secureString",
-			"metadata": "Secure string for 'connectionString' of 'Datos_pizzas'"
+			"metadata": "Cadena protegida para \"connectionString\"de \"Datos_pizzas\""
 		},
 		"dw_pizzas_password": {
 			"type": "secureString",
-			"metadata": "Secure string for 'password' of 'dw_pizzas'"
+			"metadata": "Cadena protegida para \"password\"de \"dw_pizzas\""
 		},
 		"dw_pizzas_properties_typeProperties_server": {
 			"type": "string",
