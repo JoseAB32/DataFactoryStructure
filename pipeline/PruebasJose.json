@@ -16,7 +16,7 @@
 				"userProperties": [],
 				"typeProperties": {
 					"dataflow": {
-						"referenceName": "df_dim_orden",
+						"referenceName": "df_dim_hechos_ordenes_detalles",
 						"type": "DataFlowReference"
 					},
 					"compute": {
