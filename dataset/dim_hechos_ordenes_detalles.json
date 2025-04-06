@@ -1,0 +1,39 @@
+{
+	"name": "dim_hechos_ordenes_detalles",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "dw_pizzas",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "dw"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "id_orden_detalle",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "id_orden",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "id_pizza",
+				"type": "varchar"
+			},
+			{
+				"name": "cantidad",
+				"type": "int",
+				"precision": 10
+			}
+		],
+		"typeProperties": {
+			"schema": "dbo",
+			"table": "HECHOS_ORDENES_DETALLES"
+		}
+	}
+}

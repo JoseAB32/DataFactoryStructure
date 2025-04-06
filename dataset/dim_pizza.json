@@ -1,0 +1,38 @@
+{
+	"name": "dim_pizza",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "dw_pizzas",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "dw"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "id_pizza",
+				"type": "varchar"
+			},
+			{
+				"name": "id_tipo",
+				"type": "varchar"
+			},
+			{
+				"name": "tamano",
+				"type": "varchar"
+			},
+			{
+				"name": "precio",
+				"type": "decimal",
+				"precision": 18,
+				"scale": 0
+			}
+		],
+		"typeProperties": {
+			"schema": "dbo",
+			"table": "DIM_PIZZA"
+		}
+	}
+}
