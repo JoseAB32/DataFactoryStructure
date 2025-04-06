@@ -140,7 +140,7 @@
 				"userProperties": [],
 				"typeProperties": {
 					"dataflow": {
-						"referenceName": "df_dim_tipos_pizza",
+						"referenceName": "df_dim_pizzas",
 						"type": "DataFlowReference"
 					},
 					"compute": {
