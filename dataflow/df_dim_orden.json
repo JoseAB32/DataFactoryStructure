@@ -1,0 +1,81 @@
+{
+	"name": "df_dim_orden",
+	"properties": {
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "ordenes_csv",
+						"type": "DatasetReference"
+					},
+					"name": "source1"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "dim_orden",
+						"type": "DatasetReference"
+					},
+					"name": "sink1"
+				}
+			],
+			"transformations": [
+				{
+					"name": "derivedColumn1"
+				},
+				{
+					"name": "select1"
+				},
+				{
+					"name": "filter1"
+				},
+				{
+					"name": "aggregate1"
+				}
+			],
+			"scriptLines": [
+				"source(output(",
+				"          order_id as integer,",
+				"          date as date 'yyyy-MM-dd',",
+				"          time as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> source1",
+				"source1 derive(hora = toTimestamp(concat('1900-01-01 ', time), 'yyyy-MM-dd HH:mm:ss')) ~> derivedColumn1",
+				"derivedColumn1 select(mapColumn(",
+				"          order_id,",
+				"          date,",
+				"          hora",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> select1",
+				"select1 filter(!isNull(order_id)) ~> filter1",
+				"filter1 aggregate(groupBy(order_id),",
+				"     each(match(name != \"order_id\"), $$ = first($$))) ~> aggregate1",
+				"aggregate1 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     input(",
+				"          id_orden as integer,",
+				"          fecha as date,",
+				"          hora as timestamp",
+				"     ),",
+				"     deletable:false,",
+				"     insertable:true,",
+				"     updateable:false,",
+				"     upsertable:false,",
+				"     format: 'table',",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     errorHandlingOption: 'stopOnFirstError',",
+				"     mapColumn(",
+				"          id_orden = order_id,",
+				"          fecha = date,",
+				"          hora",
+				"     )) ~> sink1"
+			]
+		}
+	}
+}
