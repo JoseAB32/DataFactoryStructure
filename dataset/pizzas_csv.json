@@ -1,0 +1,43 @@
+{
+	"name": "pizzas_csv",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "Datos_pizzas",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "datos"
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobStorageLocation",
+				"fileName": "pizzas.csv",
+				"container": "datos-pizzas"
+			},
+			"columnDelimiter": ",",
+			"escapeChar": "\\",
+			"firstRowAsHeader": true,
+			"quoteChar": "\""
+		},
+		"schema": [
+			{
+				"name": "pizza_id",
+				"type": "String"
+			},
+			{
+				"name": "pizza_type_id",
+				"type": "String"
+			},
+			{
+				"name": "size",
+				"type": "String"
+			},
+			{
+				"name": "price",
+				"type": "String"
+			}
+		]
+	}
+}

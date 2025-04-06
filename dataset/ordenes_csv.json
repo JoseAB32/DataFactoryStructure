@@ -1,0 +1,39 @@
+{
+	"name": "ordenes_csv",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "Datos_pizzas",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "datos"
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobStorageLocation",
+				"fileName": "orders.csv",
+				"container": "datos-pizzas"
+			},
+			"columnDelimiter": ",",
+			"escapeChar": "\\",
+			"firstRowAsHeader": true,
+			"quoteChar": "\""
+		},
+		"schema": [
+			{
+				"name": "order_id",
+				"type": "String"
+			},
+			{
+				"name": "date",
+				"type": "String"
+			},
+			{
+				"name": "time",
+				"type": "String"
+			}
+		]
+	}
+}
