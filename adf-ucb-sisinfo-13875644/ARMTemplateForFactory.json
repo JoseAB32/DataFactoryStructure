@@ -4,16 +4,16 @@
 	"parameters": {
 		"factoryName": {
 			"type": "string",
-			"metadata": "Nombre de instancia de Data Factory",
+			"metadata": "Data Factory name",
 			"defaultValue": "adf-ucb-sisinfo-13875644"
 		},
 		"Datos_pizzas_connectionString": {
 			"type": "secureString",
-			"metadata": "Cadena protegida para \"connectionString\"de \"Datos_pizzas\""
+			"metadata": "Secure string for 'connectionString' of 'Datos_pizzas'"
 		},
 		"dw_pizzas_password": {
 			"type": "secureString",
-			"metadata": "Cadena protegida para \"password\"de \"dw_pizzas\""
+			"metadata": "Secure string for 'password' of 'dw_pizzas'"
 		},
 		"dw_pizzas_properties_typeProperties_server": {
 			"type": "string",
@@ -52,7 +52,7 @@
 						"userProperties": [],
 						"typeProperties": {
 							"dataflow": {
-								"referenceName": "df_dim_orden",
+								"referenceName": "df_dim_hechos_ordenes_detalles",
 								"type": "DataFlowReference",
 								"parameters": {},
 								"datasetParameters": {
@@ -75,7 +75,7 @@
 				"annotations": []
 			},
 			"dependsOn": [
-				"[concat(variables('factoryId'), '/dataflows/df_dim_orden')]"
+				"[concat(variables('factoryId'), '/dataflows/df_dim_hechos_ordenes_detalles')]"
 			]
 		},
 		{
@@ -816,6 +816,86 @@
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/datasets/ordenes_csv')]",
 				"[concat(variables('factoryId'), '/datasets/dim_fecha')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/df_dim_hechos_ordenes_detalles')]",
+			"type": "Microsoft.DataFactory/factories/dataflows",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"type": "MappingDataFlow",
+				"typeProperties": {
+					"sources": [
+						{
+							"dataset": {
+								"referenceName": "ordenes_detalles_csv",
+								"type": "DatasetReference"
+							},
+							"name": "source1"
+						}
+					],
+					"sinks": [
+						{
+							"dataset": {
+								"referenceName": "dim_hechos_ordenes_detalles",
+								"type": "DatasetReference"
+							},
+							"name": "sink1"
+						}
+					],
+					"transformations": [
+						{
+							"name": "filter1"
+						},
+						{
+							"name": "sort1"
+						},
+						{
+							"name": "aggregate1"
+						}
+					],
+					"scriptLines": [
+						"source(output(",
+						"          order_details_id as integer,",
+						"          order_id as integer,",
+						"          pizza_id as string,",
+						"          quantity as integer",
+						"     ),",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     ignoreNoFilesFound: false) ~> source1",
+						"source1 filter(!isNull(order_details_id)) ~> filter1",
+						"filter1 sort(asc(order_details_id, true)) ~> sort1",
+						"sort1 aggregate(groupBy(order_details_id),",
+						"     each(match(name!=\"order_details_id\"), $$ = first($$))) ~> aggregate1",
+						"aggregate1 sink(allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     input(",
+						"          id_orden_detalle as integer,",
+						"          id_orden as integer,",
+						"          id_pizza as string,",
+						"          cantidad as integer",
+						"     ),",
+						"     deletable:false,",
+						"     insertable:true,",
+						"     updateable:false,",
+						"     upsertable:false,",
+						"     format: 'table',",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true,",
+						"     errorHandlingOption: 'stopOnFirstError',",
+						"     mapColumn(",
+						"          id_orden_detalle = order_details_id,",
+						"          id_orden = order_id,",
+						"          id_pizza = pizza_id,",
+						"          cantidad = quantity",
+						"     )) ~> sink1"
+					]
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/ordenes_detalles_csv')]",
+				"[concat(variables('factoryId'), '/datasets/dim_hechos_ordenes_detalles')]"
 			]
 		},
 		{
