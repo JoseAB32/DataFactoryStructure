@@ -4,16 +4,16 @@
 	"parameters": {
 		"factoryName": {
 			"type": "string",
-			"metadata": "Data Factory name",
+			"metadata": "Nombre de instancia de Data Factory",
 			"defaultValue": "adf-ucb-sisinfo-13875644"
 		},
 		"Datos_pizzas_connectionString": {
 			"type": "secureString",
-			"metadata": "Secure string for 'connectionString' of 'Datos_pizzas'"
+			"metadata": "Cadena protegida para \"connectionString\"de \"Datos_pizzas\""
 		},
 		"dw_pizzas_password": {
 			"type": "secureString",
-			"metadata": "Secure string for 'password' of 'dw_pizzas'"
+			"metadata": "Cadena protegida para \"password\"de \"dw_pizzas\""
 		},
 		"dw_pizzas_properties_typeProperties_server": {
 			"type": "string",
@@ -32,6 +32,144 @@
 		"factoryId": "[concat('Microsoft.DataFactory/factories/', parameters('factoryName'))]"
 	},
 	"resources": [
+		{
+			"name": "[concat(parameters('factoryName'), '/PruebasJose')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "Data flow1",
+						"type": "ExecuteDataFlow",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"dataflow": {
+								"referenceName": "df_dim_orden",
+								"type": "DataFlowReference",
+								"parameters": {},
+								"datasetParameters": {
+									"source1": {},
+									"sink1": {}
+								}
+							},
+							"staging": {},
+							"compute": {
+								"coreCount": 8,
+								"computeType": "General"
+							},
+							"traceLevel": "Fine"
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {}
+				},
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/dataflows/df_dim_orden')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/pl_dim_pizzas')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "Data flow1",
+						"type": "ExecuteDataFlow",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"dataflow": {
+								"referenceName": "df_dim_pizzas",
+								"type": "DataFlowReference",
+								"parameters": {},
+								"datasetParameters": {
+									"source1": {},
+									"sink1": {}
+								}
+							},
+							"staging": {},
+							"compute": {
+								"coreCount": 8,
+								"computeType": "General"
+							},
+							"traceLevel": "Fine"
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {}
+				},
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/dataflows/df_dim_pizzas')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/pl_dim_tipos_pizzas')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "Data flow1",
+						"type": "ExecuteDataFlow",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"dataflow": {
+								"referenceName": "df_dim_tipos_pizza",
+								"type": "DataFlowReference",
+								"parameters": {},
+								"datasetParameters": {
+									"source1": {},
+									"sink1": {}
+								}
+							},
+							"staging": {},
+							"compute": {
+								"coreCount": 8,
+								"computeType": "General"
+							},
+							"traceLevel": "Fine"
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {}
+				},
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/dataflows/df_dim_tipos_pizza')]"
+			]
+		},
 		{
 			"name": "[concat(parameters('factoryName'), '/dim_fecha')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
@@ -218,6 +356,92 @@
 			]
 		},
 		{
+			"name": "[concat(parameters('factoryName'), '/dim_pizzas_camb')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "dw_pizzas",
+					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "dw"
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [
+					{
+						"name": "id_pizza",
+						"type": "varchar"
+					},
+					{
+						"name": "id_tipo",
+						"type": "varchar"
+					},
+					{
+						"name": "tamano",
+						"type": "varchar"
+					},
+					{
+						"name": "precio",
+						"type": "decimal",
+						"precision": 10,
+						"scale": 2
+					}
+				],
+				"typeProperties": {
+					"schema": "dbo",
+					"table": "DIM_PIZZA"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/dw_pizzas')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/dim_pizzas_camb2')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "dw_pizzas",
+					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "dw"
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [
+					{
+						"name": "id_pizza",
+						"type": "varchar"
+					},
+					{
+						"name": "id_tipo",
+						"type": "varchar"
+					},
+					{
+						"name": "tamano",
+						"type": "varchar"
+					},
+					{
+						"name": "precio",
+						"type": "decimal",
+						"precision": 10,
+						"scale": 2
+					}
+				],
+				"typeProperties": {
+					"schema": "dbo",
+					"table": "DIM_PIZZA"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/dw_pizzas')]"
+			]
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/dim_tipo_pizza')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
@@ -367,9 +591,9 @@
 						"container": "datos-pizzas"
 					},
 					"columnDelimiter": ",",
-					"escapeChar": "\\",
+					"escapeChar": "/",
 					"firstRowAsHeader": true,
-					"quoteChar": "\""
+					"quoteChar": ""
 				},
 				"schema": [
 					{
@@ -409,7 +633,7 @@
 					"columnDelimiter": ",",
 					"escapeChar": "\\",
 					"firstRowAsHeader": true,
-					"quoteChar": "\""
+					"quoteChar": ""
 				},
 				"schema": [
 					{
@@ -426,6 +650,50 @@
 					},
 					{
 						"name": "price",
+						"type": "String"
+					}
+				]
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/Datos_pizzas')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/pizzas_limpio_csv')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "Datos_pizzas",
+					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "datos"
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobStorageLocation",
+						"fileName": "pizzas_limpio.csv",
+						"container": "datos-pizzas"
+					},
+					"columnDelimiter": ",",
+					"escapeChar": "\\",
+					"firstRowAsHeader": true,
+					"quoteChar": "\""
+				},
+				"schema": [
+					{
+						"name": "pizza_type_id",
+						"type": "String"
+					},
+					{
+						"name": "name",
+						"type": "String"
+					},
+					{
+						"name": "category",
 						"type": "String"
 					}
 				]
@@ -716,6 +984,180 @@
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/datasets/ordenes_csv')]",
 				"[concat(variables('factoryId'), '/datasets/dim_orden')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/df_dim_pizzas')]",
+			"type": "Microsoft.DataFactory/factories/dataflows",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"type": "MappingDataFlow",
+				"typeProperties": {
+					"sources": [
+						{
+							"dataset": {
+								"referenceName": "pizzas_csv",
+								"type": "DatasetReference"
+							},
+							"name": "source1"
+						}
+					],
+					"sinks": [
+						{
+							"dataset": {
+								"referenceName": "dim_pizzas_camb2",
+								"type": "DatasetReference"
+							},
+							"name": "sink1"
+						}
+					],
+					"transformations": [
+						{
+							"name": "select1"
+						},
+						{
+							"name": "aggregate1"
+						},
+						{
+							"name": "derivedColumn1"
+						},
+						{
+							"name": "sort1"
+						}
+					],
+					"scriptLines": [
+						"source(output(",
+						"          pizza_id as string,",
+						"          pizza_type_id as string,",
+						"          size as string,",
+						"          price as string",
+						"     ),",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     ignoreNoFilesFound: false) ~> source1",
+						"source1 select(mapColumn(",
+						"          pizza_id,",
+						"          pizza_type_id,",
+						"          size,",
+						"          price",
+						"     ),",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true) ~> select1",
+						"sort1 aggregate(groupBy(pizza_id),",
+						"     each(match(name!=\"pizza_id\"), $$ = first($$))) ~> aggregate1",
+						"aggregate1 derive(price = toFloat(replace(price, ',', '.'))) ~> derivedColumn1",
+						"select1 sort(asc(pizza_id, true)) ~> sort1",
+						"derivedColumn1 sink(allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     input(",
+						"          id_pizza as string,",
+						"          id_tipo as string,",
+						"          tamano as string,",
+						"          precio as decimal(10,2)",
+						"     ),",
+						"     deletable:false,",
+						"     insertable:true,",
+						"     updateable:false,",
+						"     upsertable:false,",
+						"     format: 'table',",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true,",
+						"     errorHandlingOption: 'stopOnFirstError',",
+						"     mapColumn(",
+						"          id_pizza = pizza_id,",
+						"          id_tipo = pizza_type_id,",
+						"          tamano = size,",
+						"          precio = price",
+						"     )) ~> sink1"
+					]
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/pizzas_csv')]",
+				"[concat(variables('factoryId'), '/datasets/dim_pizzas_camb2')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/df_dim_tipos_pizza')]",
+			"type": "Microsoft.DataFactory/factories/dataflows",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"type": "MappingDataFlow",
+				"typeProperties": {
+					"sources": [
+						{
+							"dataset": {
+								"referenceName": "pizzas_limpio_csv",
+								"type": "DatasetReference"
+							},
+							"name": "source1"
+						}
+					],
+					"sinks": [
+						{
+							"dataset": {
+								"referenceName": "dim_tipo_pizza",
+								"type": "DatasetReference"
+							},
+							"name": "sink1"
+						}
+					],
+					"transformations": [
+						{
+							"name": "select1"
+						},
+						{
+							"name": "aggregate1"
+						},
+						{
+							"name": "sort1"
+						}
+					],
+					"scriptLines": [
+						"source(output(",
+						"          pizza_type_id as string,",
+						"          name as string,",
+						"          category as string",
+						"     ),",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     ignoreNoFilesFound: false) ~> source1",
+						"source1 select(mapColumn(",
+						"          pizza_type_id,",
+						"          name,",
+						"          category",
+						"     ),",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true) ~> select1",
+						"sort1 aggregate(groupBy(pizza_type_id),",
+						"     each(match(name!=\"pizza_type_id\"), $$ = first($$))) ~> aggregate1",
+						"select1 sort(asc(pizza_type_id, true)) ~> sort1",
+						"aggregate1 sink(allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     input(",
+						"          id_tipo as string,",
+						"          nombre as string,",
+						"          categoria as string",
+						"     ),",
+						"     deletable:false,",
+						"     insertable:true,",
+						"     updateable:false,",
+						"     upsertable:false,",
+						"     format: 'table',",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true,",
+						"     errorHandlingOption: 'stopOnFirstError',",
+						"     mapColumn(",
+						"          id_tipo = pizza_type_id,",
+						"          nombre = name,",
+						"          categoria = category",
+						"     )) ~> sink1"
+					]
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/pizzas_limpio_csv')]",
+				"[concat(variables('factoryId'), '/datasets/dim_tipo_pizza')]"
 			]
 		}
 	]
